@@ -1,0 +1,98 @@
+# example compilation database
+[
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cf_alloc.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cfind.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cf_index.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cfind-index.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cf_map.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cf_string.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cf_vector.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "cf_db.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "db_types.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "main_support.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "mem_db.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "nop_db.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "parse.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "print_ast.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "search.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "search_types.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "sql_db.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "sql_query.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -I. -I/usr/lib/llvm-16/include/",
+		"file": "token.c"
+	}
+]

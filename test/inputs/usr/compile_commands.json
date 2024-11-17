@@ -1,0 +1,18 @@
+# example compilation database
+[
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -fsyntax-only",
+		"file": "t.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -fsyntax-only",
+		"file": "t2.c"
+	},
+	{
+		"directory": ".",
+		"command": "clang -std=c17 -fsyntax-only",
+		"file": "t3.c"
+	}
+]

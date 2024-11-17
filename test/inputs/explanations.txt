@@ -1,0 +1,164 @@
+test explanations
+copied from notes
+
+t.c
+	look up at line 660 about indexing pointer variables
+	query: `foo_t *` return type variables XXX seems too specific
+	return ("tmp `foo_t*` variable returned from make_foo()",
+	but *not* "local `foo_t` in make_foo()")
+t2.c
+	query: `foo_t` initialization
+	return `foo_t` c99 init nested in `bar_t` in api()
+	note: caution again with indexing pointer/struct inits
+t3.c
+	query: `foo_t::a` access
+	return: access in mutate_foo(), type "rmw"
+t4.c
+	this may not be a feasible test case
+	query: `foo_t::a.bbb` access
+	return: access in mutate_foo(), type "store"
+t5.c
+	this is more about C language oddness than a test
+	query: `struct bar` definition
+	return: definition nested in `struct foo`
+	query: `struct bar` local variables
+	return: line 25 (but not those nested in `struct foo`)
+t6.c
+	query: `bar_t` definition
+	return: either typedef in api(), or `struct bar`
+t7.c
+	query: global `file_ops_t` variables
+	return: definition of `nop_fs`
+	query: misc use of `file_ops_t`
+	return: addr formation in api() - `&nop_fs`
+t8.c
+	query: `foo_t` initialization
+	return: (global_foo(), make_foo() compound literal, api()'s make_foo call,
+	api()'s compound literal)
+t9.c
+	hard mode
+	query: global `struct foo` definition
+	return: incomplete definitions(maybe), line 5 global definition
+	query: global `struct foo` variables
+	return: return type of api(); but *not* api()'s nested variables
+	query: (XXX maybe too specific) `api()::struct foo` definition
+	return: nested api() `struct foo` definition
+t10.c
+	similar to t9.c,
+	query: global `struct foo` definition
+	return: incomplete global definition only; *not* `api()::struct foo`
+	query: global `struct foo` variables
+	return: return type of `bpi()`; but *not* api()'s local `f`
+t11.c
+	a test of temporary variables
+	query: enum `cond_t` variables
+	return: return type from classify() call in foo()
+t12.{c,h}
+	a preprocessor test
+	query: (???) definition of `struct foo::a`
+	return: `int a;` definition in "t12.h"
+t13.c
+	a comprehensive initialization test
+	again, look at line 660 for indexing pointer init versus struct init
+	query: `struct foo` init
+	return: various inits through `typedef`s or nested variables
+t14.{c,h}; t14_a.c
+	the most common example of incomplete types
+	header has `struct foo;`, one ".c" completes it, other ".c" uses it
+	query: `struct foo` definition
+	return: definition in "t14.c"
+	query: `foo_t` use (or something)
+	return: `foo_t *` in "t14_a.c" -- it should be the same type
+t15.c
+	AST test that forward declartion happens as a side effect of a typedef
+	query: `foo_t` typedef
+	return: (???) incomplete type on the same line
+t16.h, t16_{a,b}.c
+	database test for non-unique file names
+	the goal is to recognize "t16.h" is the same as "./t16.h"
+	query: `spinlock_t` parameters in both ".c" files
+	return: `struct` definition in "t16.h"
+t17.h
+	AST/database backend test
+	the goal is to be able to handle multiple nested anonymous types
+	`typedef struct {struct{}b;} a;`
+	query: (???) don't confuse `a` with `b`; don't skip indexing `b`
+t18.c
+	C language test
+	structures can have self references
+	query: ???
+t19.c
+	similar to t9.c
+	function scope "union foo" shadows global scope "struct foo"
+	query: `struct foo`
+	return: global `struct foo` definition
+	query: `union foo`
+	return: nested `union foo` definition
+t20.c
+	AST test for anonymous unions, implicit members, and indirect members.
+	a minimal subset of t4.c
+	t20..t22 are all related
+	query: `struct foo::v1` definition
+	return: `v1` in anonymous union
+	query: `struct foo::v1` mutation
+	return `f->v1` in api()
+t21.c
+	similar to t20.c
+	indexer test for double nested anonymous structs add indirect members to
+	their first named ancestor
+	query: `struct foo::v3`
+	return: `v3` in second nested anonymous struct
+t22.c
+	variant of t21.c
+	indexer test that anonymous struct members are added to the right parent
+	query: member `foo_i1`
+	return: 2 locations -- `struct n1`; nested `foo_i1`
+t23.c
+	indexer test
+	the children of global unnamed structs must be indexed
+	query: `struct foo` definition
+	return: location within unnamed struct
+t24.c
+	index test; extended version of t23.c
+	function level unnamed-no-instance structs are legal but not indexed
+	nested named-no-instance structs are legal and must be indexed
+	query: `struct foo` definition
+	return: 2 locations -- global  `struct foo`; function nested `struct foo`
+t25.c
+	basic index test: empty struct
+	bare minimum test: standard C doesn't allow empty structs, but clang does
+	query: `struct foo`
+	return: location
+t26.c
+	basic index test: 1 member struct
+	query: `struct foo`
+	return: location
+	query: `struct foo` member 'a'
+	return: location; check child of `foo`
+t27.c
+	exhaustive struct indexer test
+	this test is better for using as an example input to the CLI tools
+	query:??? many things
+t28.c
+	exhaustive indexer test
+	a condensed version of t27.c
+	query: struct s9
+	return: variable-name s9
+	query: struct ex7
+	return: location in s10
+t29.c
+	simple `extern` test
+	make sure indexer doesn't choke on the keyword
+	implementation should be similar to incomplete types
+t30.c
+	harder version of t22.c and t24.c
+	named struct, nested within anonymous structs, are global scope
+	query: struct ex1, struct ex2
+	return: locations
+	query: members of ex1
+	return: a, b, c
+usr/
+	example project to show the shortcomings of USRs
+	both global "t.h:struct foo"
+	and local "t2.c:struct foo"
+	emit the same USR "c:@S@foo"

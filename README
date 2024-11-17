@@ -1,0 +1,98 @@
+C Find
+
+A code search tool for the C language. The intent is to replace cscope with an
+AST-based tool that can search through the semantics of the language and not
+just the text.
+
+This program is released under the terms of GNU GPL-2.0 or later. A copy of the
+license is provided in COPYING.
+
+-------------------------------------------------------------------------------
+
+Intro
+-----
+
+cscope, and many other code search tools, only have a minimal understanding of
+the C language. They only really index the text of the language. Everything
+they can find can usually be found with a clever grep search.
+
+C Find is different in that it indexes an AST, and it specifically focuses on
+indexing the parts that cannot be found by a text search.
+
+The project is divided into two command line tools:
+- `cfind-index`
+  This uses libclang to compile C source code, index ASTs, and then output a
+  sqlite database.
+- `cfind`
+  This is a tool that makes queries to a db created by `cfind-index`.
+
+Features
+--------
+
+C Find is a new project. It currently only supports a sparse set of features
+which center around indexing user-defined types.
+
+`cfind-index` can index:
+- multiple ".c" files
+- global scope struct, union, enum definitions
+- global scope typedefs
+- where a type is used as a member of another type
+
+`cfind` can look up:
+- struct/union/enum definitions
+- typedefs
+- members of a struct/union
+
+What is not implemented, but planned is:
+- indexing anything in a function
+- incomplete types
+
+NOTE: the database schema is unstable. Expect databases created with
+`cfind-index` to be incompatible with future versions of `cfind`.
+
+How to build
+------------
+
+The first is getting dependencies. On a Debian-based system, you can install
+the following packages:
+  libsqlite3-dev
+  libclang-16-dev
+
+On other OSes, you'll have to look through your package manager for similar
+versions.
+
+C Find uses a simple makefile. In the best case, you run `make` and output is
+created in a directory named "build/". If this fails, try changing the
+"Makefile" variables that point to where the clang and sqlite dependencies are
+installed.
+
+Example use
+-----------
+
+In this example, we'll use `cfind-index` to index the cfind project itself.
+Then, we'll make a few queries with `cfind`.
+
+First, it is worth noting that the input to the indexer is a "compilation
+database". A fancy term for a "compile_commands.json" file that describes how
+to compile a project's source code. It is easy to write by hand, but some build
+systems or tools can produce them automatically. A sample file for C Find is
+included in the project directory.
+
+See https://clang.llvm.org/docs/JSONCompilationDatabase.html
+
+Transcript:
+```
+  $ make cfind cfind-index
+  ...
+  $ ls compile_commands.json  # file created ahead of time
+  compile_commands.json
+  $ build/cfind-index -d .  # pass in the directory containing comp db
+  ...
+
+  $ ls cf.db  # default output name
+  cf.db
+  $ build/cfind -c "typename sqlite_db_t" ./cf.db  # look up `sqlite_db_t`
+  55 'sqlite_db_t' at .../cfind/sql_db.h:37:1
+  $ build/cfind -c "memberdecl cf_db_t sql" ./cf.db  # look up member `sql`
+  69.'sql', type 55, at .../cfind/cf_db.h:43:3
+```
